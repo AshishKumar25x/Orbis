@@ -1,8 +1,13 @@
 "use client";
 
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { useEffect, useState } from "react";
 
 export default function ProfileInfo() {
+
+  const isLoading = useAuthRedirect({ requireAuth: true });
+  
+  
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -35,6 +40,7 @@ export default function ProfileInfo() {
       const res = await fetch("/api/auth/me");
       if (!res.ok) throw new Error("Failed to fetch user");
       const data = await res.json();
+      if(!data) return;
       setUser(data);
     } catch (err) {
       setError(err.message);
@@ -46,7 +52,7 @@ export default function ProfileInfo() {
   useEffect(() => {
     fetchUser();
   }, []);
-
+  
   // Handle input changes
   const handleChange = (section, field, value, index = null) => {
     if (section === "basicInfo") {
@@ -83,9 +89,9 @@ export default function ProfileInfo() {
 
   // Add/remove work or education
   const addEntry = (field) => {
-  if (user.basicInfo[field].length >= 4) return;
-
-  setUser((prev) => ({
+    if (user.basicInfo[field].length >= 4) return;
+    
+    setUser((prev) => ({
     ...prev,
     basicInfo: {
       ...prev.basicInfo,
@@ -105,22 +111,22 @@ const removeEntry = (field, index) => {
   }));
 };
 
-  // Save profile
-  const handleSave = async () => {
-    setSaving(true);
-    setError("");
-    setSuccess("");
-    try {
-      const res = await fetch("/api/auth/me", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          basicInfo: user.basicInfo,
-          account: user.account,
-          username: user.username,
-          avatar: user.avatar,
-          bio: user.bio,
-        }),
+// Save profile
+const handleSave = async () => {
+  setSaving(true);
+  setError("");
+  setSuccess("");
+  try {
+    const res = await fetch("/api/auth/me", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        basicInfo: user.basicInfo,
+        account: user.account,
+        username: user.username,
+        avatar: user.avatar,
+        bio: user.bio,
+      }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to save");
@@ -132,7 +138,8 @@ const removeEntry = (field, index) => {
       setSaving(false);
     }
   };
-
+  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
+  
   if (loading) {
     return (
       <div className="flex items-center justify-center h-40 text-gray-500 dark:text-gray-400">

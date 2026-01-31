@@ -1,8 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import DebounceSearch from "@/components/DebounceSearch";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export default function ProfileSkills() {
+
+    const isLoading = useAuthRedirect({ requireAuth: true });
+  
   const [userSkills, setUserSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -45,6 +49,7 @@ export default function ProfileSkills() {
       setError(err.message);
     }
   };
+  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
 
   if (loading) {
     return (

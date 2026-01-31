@@ -19,6 +19,7 @@ export async function POST(request) {
       }
     }
     const hashedpassword = await bcrypt.hash(password, 10);
+    console.log(hashedpassword);
     const newUser = await User.create({
       username,
       email,
@@ -31,6 +32,6 @@ export async function POST(request) {
       },
     );
   } catch (error) {
-    return Response.json({ error: "Error registering user" }, { status: 400 });
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }

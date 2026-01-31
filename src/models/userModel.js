@@ -30,6 +30,25 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    basicInfo: {
+      name: { type: String, default: "" },
+      gender: { type: String},
+      location: {
+        country: { type: String, default: "" },
+        state: { type: String, default: "" },
+        city: { type: String, default: "" },
+      },
+      work: { type: [String], default: [] },
+      education: { type: [String], default: [] },
+      birthday: { type: Date },
+    },
+    account: {
+      github: { type: String, default: "" },
+      linkedin: { type: String, default: "" },
+      leetcode: { type: String, default: "" },
+      gmail: { type: String, default: "" },
+      portfolio: { type: String, default: "" },
+    },
     createdProjects: [
       {
         type: mongoose.Schema.Types.ObjectId,
